@@ -1,3 +1,9 @@
+;;; general-setup.el --- Ed's general setup
+
+;;; Commentary:
+
+;;; Code:
+
 (add-hook 'comint-output-filter-functions 'comint-watch-for-password-prompt)
 (display-time)
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -36,3 +42,39 @@
 
 (subword-mode 1)
 (smex-initialize)
+
+(defun ed/untabify-line ()
+  (interactive)
+  (save-excursion
+    (back-to-indentation)
+    (let ((m (point)))
+      (end-of-line)
+      (untabify m (point)))))
+
+(defun ed/un-camelcase-string (s &optional sep start)
+  "Convert CamelCase string S to lower case with word separator SEP.
+Default for SEP is a hyphen \"-\".
+
+If third argument START is non-nil, convert words after that
+index in STRING."
+  (let ((case-fold-search nil))
+    (while (string-match "[A-Z]" s (or start 1))
+      (setq s (replace-match (concat (or sep "-")
+				     (downcase (match-string 0 s)))
+			     t nil s)))
+    (downcase s)))
+
+(defun ed/un-camelcase-region ()
+  "Uncamelcase region."
+  (interactive)
+  (let* ((start (region-beginning))
+	 (end (region-end))
+	 (replacement (ed/un-camelcase-string (buffer-substring-no-properties start end))))
+    (when (stringp replacement)
+      (save-excursion
+	(delete-region start end)
+	(goto-char start)
+	(insert replacement)))))
+
+;; (provide 'general-setup)
+;;; general-setup.el ends here
