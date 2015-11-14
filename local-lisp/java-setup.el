@@ -1,6 +1,34 @@
 ;;; java-setup.el --- Ed's setup
 
 ;;; Commentary:
+;;
+;; Manual shell scripts look something like:
+;;
+;; #!/bin/bash
+;; 
+;; ## $1 is the data being asked for, and $2 is the buffer file name
+;; case $1 in
+;;     classpath)
+;;         echo -n '/Users/ebo03/dev/java-scratchpad/target/classes/'
+;;         ;;
+;;     target-dir)
+;;         echo -n '/Users/ebo03/dev/java-scratchpad/target/classes/'
+;;         ;;
+;;     project-dir)
+;;         pwd -P
+;;         ;;
+;;     source-path)
+;;         echo -n ''
+;;         ;;
+;;     source-version)
+;;         echo -n '1.8'
+;;         ;;
+;;     target-version)
+;;         echo -n '1.8'
+;;         ;;
+;;     post-compile-hook)
+;;         ;;
+;; esac
 
 ;;; Code:
 
