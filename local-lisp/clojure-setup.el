@@ -6,6 +6,7 @@
 
 (require 'cider)
 (add-hook 'cider-mode-hook #'eldoc-mode)
+(add-hook 'cider-mode-hook #'yafolding-mode)
 
 ;; (setq cider-prompt-save-file-on-load 'always-save)u
 
