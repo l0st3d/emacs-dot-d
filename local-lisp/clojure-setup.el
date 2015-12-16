@@ -13,8 +13,8 @@
 (defun ed-clojure/compile-after-save ()
   "Compile after save."
   (when (and (eq major-mode 'clojure-mode)
-	     (or (not (string-match ".*/project\\.clj$" (buffer-file-name)))
-		 (not (string-match ".*/profiles\\.clj$" (buffer-file-name))))
+	     (and (not (string-match ".*/project\\.clj$" (buffer-file-name)))
+                  (not (string-match ".*/profiles\\.clj$" (buffer-file-name))))
 	     (cider-connected-p))
     (cider-load-buffer)))
 
@@ -29,7 +29,10 @@
   (define-key clojure-mode-map (kbd "C-c C-0") 'paredit-forward-slurp-sexp)
   (define-key clojure-mode-map (kbd "C-c C-(") 'paredit-backward-barf-sexp)
   (define-key clojure-mode-map (kbd "C-c C-)") 'paredit-forward-barf-sexp)
-  (define-key clojure-mode-map (kbd "C-c \"") 'clojure-toggle-keyword-string))
+  (define-key clojure-mode-map (kbd "C-c \"") 'clojure-toggle-keyword-string)
+  (define-key cider-repl-mode-map (kbd "C-c <C-backspace>") 'paredit-raise-sexp)
+  (cljr-add-keybindings-with-prefix "C-c r")
+  (clj-refactor-mode))
 
 (add-hook 'clojure-mode-hook 'ed-clojure/bind-keys)
 
