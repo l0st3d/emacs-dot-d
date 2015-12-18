@@ -22,7 +22,7 @@
 (server-start)
 (setq compilation-scroll-output t)
 (setq completion-ignore-case t)
-(setq-default ispell-program-name "/usr/local/bin/aspell")
+(setq-default ispell-program-name "/usr/bin/aspell")
 (setq ido-enable-flex-matching t)
 (setq ispell-personal-dictionary "~/.personalDictionary")
 (setq make-backup-files nil)
