@@ -1,0 +1,6 @@
+# -*- coding: utf-8 -*-
+# name: insert clojure ns form
+# key: ns
+# --
+(ns `(cider-current-ns)`
+  (${1:$$(yas-choose-value '(":require" ":import"))} [$2 :as $3]))
