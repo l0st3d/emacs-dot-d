@@ -36,6 +36,7 @@
   (define-key cider-repl-mode-map (kbd "C-c <C-backspace>") 'paredit-raise-sexp)
   (clj-refactor-mode 1)
   (yas-minor-mode 1)
+  (aggressive-indent-mode)
   (cljr-add-keybindings-with-prefix "C-c r"))
 
 (add-hook 'clojure-mode-hook 'ed-clojure/bind-keys)

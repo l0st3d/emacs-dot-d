@@ -76,5 +76,7 @@ index in STRING."
 	(goto-char start)
 	(insert replacement)))))
 
+;; (global-aggressive-indent-mode)
+
 ;; (provide 'general-setup)
 ;;; general-setup.el ends here

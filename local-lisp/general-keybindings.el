@@ -1,3 +1,7 @@
+;;; package --- Summary
+;;; Commentary:
+
+;;; Code:
 (global-unset-key "\C-x\C-c")
 
 (global-set-key (kbd "C-z") 'smex)
@@ -44,3 +48,18 @@
 (global-set-key (kbd "C-M-^") 'ed/delete-indentation-insert-comma)
 
 (global-set-key (kbd "C-^") 'delete-blank-lines)
+
+(global-set-key (kbd "C-n") 'next-logical-line)
+(global-set-key (kbd "C-p") 'previous-logical-line)
+
+(require 'multiple-cursors)
+(define-prefix-command 'ed/C-x-C-c-prefix)
+(global-set-key (kbd "C-x C-c") 'ed/C-x-C-c-prefix)
+(define-key ed/C-x-C-c-prefix (kbd "C-SPC") 'mc/mark-all-like-this)
+(define-key ed/C-x-C-c-prefix (kbd "C-c") 'mc/mark-all-words-like-this)
+(define-key ed/C-x-C-c-prefix (kbd "C-/") 'company-complete)
+
+(provide 'general-keybindings)
+;;; general-keybindings.el ends here
+
+
