@@ -53,13 +53,33 @@
 (global-set-key (kbd "C-p") 'previous-logical-line)
 
 (require 'multiple-cursors)
-(define-prefix-command 'ed/C-x-C-c-prefix)
-(global-set-key (kbd "C-x C-c") 'ed/C-x-C-c-prefix)
-(define-key ed/C-x-C-c-prefix (kbd "C-SPC") 'mc/mark-all-like-this)
-(define-key ed/C-x-C-c-prefix (kbd "C-c") 'mc/mark-all-words-like-this)
-(define-key ed/C-x-C-c-prefix (kbd "C-/") 'company-complete)
+;; (define-prefix-command 'ed/C-x-C-c-prefix)
+;; (global-set-key (kbd "C-x C-c") 'ed/C-x-C-c-prefix)
+;; (define-key ed/C-x-C-c-prefix (kbd "C-SPC") 'mc/mark-all-like-this)
+;; (define-key ed/C-x-C-c-prefix (kbd "C-c") 'mc/mark-all-words-like-this)
+;; (define-key ed/C-x-C-c-prefix (kbd "C-/") 'company-complete)
+
+(defhydra hydra-ed-C-x-C-C (:colour blue)
+  "
+^Multicursor^                      ^Company^
+^^^^^^^^-----------------------------------------------------------------
+_SPC_: Mark all like region        _/_: Company complete
+  _c_: Mark all symbols like this
+  _m_: Mark here
+  _s_: isearch
+
+  _q_: quit
+"
+  ("SPC" mc/mark-all-like-this)
+  ("c" mc/mark-all-symbols-like-this)
+  ("m" (lambda ()
+         ;; todo finish
+         ) nil)
+  ("s" isearch-forward)
+  ("/" company-complete)
+  ("q" nil "cancel"))
+
+(global-set-key (kbd "C-x C-c") 'hydra-ed-C-x-C-C/body)
 
 (provide 'general-keybindings)
 ;;; general-keybindings.el ends here
-
-

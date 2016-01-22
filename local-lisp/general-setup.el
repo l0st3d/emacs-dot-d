@@ -76,6 +76,43 @@ index in STRING."
 	(goto-char start)
 	(insert replacement)))))
 
+(defun ed/mark-more-like-this-thing-at-point ()
+  "Mark more things like the thing at point.  Requires multiple-cursors."
+  (interactive)
+  (let ((this-cmd  this-command)
+        (last-cmd  last-command)
+        (regionp   mark-active))
+    (cond ((set-mark (save-excursion (goto-char (mark))
+                                     (forward-thing thgcmd-last-thing-type arg)
+                                     (point))))
+          (t
+           (setq thgcmd-last-thing-type
+                 (or thing
+                     (prog1 (let ((icicle-sort-function  nil))
+                              (intern (completing-read
+                                       "Thing (type): " (thgcmd-things-alist) nil nil nil nil
+                                       (symbol-name thgcmd-last-thing-type))))
+                       (setq this-command  this-cmd))))
+           (push-mark (save-excursion
+                        (forward-thing thgcmd-last-thing-type (prefix-numeric-value arg))
+                        (point))
+                      nil t)))
+    (let ((bnds  (thgcmd-bounds-of-thing-at-point thgcmd-last-thing-type)))
+      (unless (or regionp  bnds)
+        ;; If we are not on a thing, use `thing-region' to capture one.
+        ;; Because it always puts point after mark, flip them if necessary.
+        (thing-region (symbol-name thgcmd-last-thing-type))
+        (when (natnump (prefix-numeric-value arg)) (exchange-point-and-mark)))
+      ;; If we are not extending existing region, and we are in a thing (BNDS non-nil), then:
+      ;; We have moved forward (or backward if ARG < 0) to the end of the thing.
+      ;; Now we extend the region backward (or forward if ARG < 0) up to its beginning
+      ;; (or end if ARG < 0), to select the whole thing.
+      (unless (or regionp  (not bnds)  (eql (point) (car bnds)))
+        (forward-thing thgcmd-last-thing-type (if (< (mark) (point)) 1 -1)))))
+  (setq deactivate-mark  nil))
+
+;; (mc/mark-more-like-this-extended)
+
 ;; (global-aggressive-indent-mode)
 
 ;; (provide 'general-setup)
