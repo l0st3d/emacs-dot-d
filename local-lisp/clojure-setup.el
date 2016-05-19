@@ -5,6 +5,7 @@
 ;;; Code:
 
 (require 'cider)
+(require 'cider-client)
 (require 'clj-refactor)
 (require 'yasnippet)
 (add-hook 'cider-mode-hook #'eldoc-mode)
@@ -12,14 +13,29 @@
 
 ;; (setq cider-prompt-save-file-on-load 'always-save)
 
+(cider-add-to-alist 'cider-jack-in-dependencies "alembic" "0.3.2")
+
 (defun ed-clojure/compile-after-save ()
   "Compile after save."
   (when (and (eq major-mode 'clojure-mode)
-	     (and (not (string-match ".*/project\\.clj$" (buffer-file-name)))
-                  (not (string-match ".*/profiles\\.clj$" (buffer-file-name)))
+	     (and (not (string-match ".*/profiles\\.clj$" (buffer-file-name)))
                   (not (string-match ".*/dot.lein.profiles\\.clj$" (buffer-file-name))))
 	     (cider-connected-p))
-    (cider-load-buffer)))
+    (if (string-match ".*/project\\.clj$" (buffer-file-name))
+        (progn
+          (cider-nrepl-request:eval "(try (require 'alembic.still) (catch Exception e))"
+                                    (nrepl-make-response-handler (current-buffer)
+                                                                 (lambda (_buffer result)
+                                                                   (let ((msg (read result)))
+                                                                     (message msg)))
+                                                                 '() '() '()))
+          (cider-nrepl-request:eval "(try (alembic.still/load-project) (catch Exception e))"
+                                    (nrepl-make-response-handler (current-buffer)
+                                                                 (lambda (_buffer result)
+                                                                   (let ((msg (read result)))
+                                                                     (message msg)))
+                                                                 '() '() '())))
+      (cider-load-buffer))))
 
 (add-hook 'after-save-hook 'ed-clojure/compile-after-save)
 (require 'paredit)
@@ -40,6 +56,17 @@
   (cljr-add-keybindings-with-prefix "C-c r"))
 
 (add-hook 'clojure-mode-hook 'ed-clojure/bind-keys)
+
+(defun backward-up-sexp (arg)
+  "ARG."
+  (interactive "p")
+  (let ((ppss (syntax-ppss)))
+    (cond ((elt ppss 3)
+           (goto-char (elt ppss 8))
+           (backward-up-sexp (1- arg)))
+          ((backward-up-list arg)))))
+
+(global-set-key [remap backward-up-list] 'backward-up-sexp)
 
 ;; (provide 'clojure-setup)
 ;;; clojure-setup.el ends here

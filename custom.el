@@ -3,6 +3,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(cider-repl-display-help-banner nil)
  '(cljr-magic-require-namespaces
    (quote
     (("io" . "clojure.java.io")
@@ -11,6 +12,7 @@
      ("walk" . "clojure.walk")
      ("zip" . "clojure.zip")
      ("json" . "clojure.data.json"))))
+ '(cursor-type (quote bar))
  '(custom-enabled-themes (quote (tango-dark)))
  '(delete-active-region nil)
  '(flycheck-checkers

@@ -111,6 +111,19 @@ index in STRING."
         (forward-thing thgcmd-last-thing-type (if (< (mark) (point)) 1 -1)))))
   (setq deactivate-mark  nil))
 
+(defun ed/send-kill-ring-to-tmux (start end)
+  "Takes region START and END."
+  (interactive "r")
+  ;; (start-process "ed/send-to-tmux" "*ed/send-to-tmux*" "tmux" "load-buffer" "-" (buffer-substring-no-properties start end))
+  (shell-command-on-region start end "tmux load-buffer -"))
+
+
+;; (defun ed/replace-thing-at-point ()
+;;   "."
+;;   (interactive)
+;;   (let ((t (thing-at-point)))
+;;     (query-replace (concat "\\b" t "\\b"))))
+
 ;; (mc/mark-more-like-this-extended)
 
 ;; (global-aggressive-indent-mode)
