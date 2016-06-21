@@ -82,5 +82,7 @@
 
 ;; (global-set-key (kbd "C-x C-c") 'hydra-ed-C-x-C-C/body)
 
+(global-set-key (kbd "<s-return>") 'org-agenda)
+
 (provide 'general-keybindings)
 ;;; general-keybindings.el ends here
