@@ -215,7 +215,7 @@
 ;; (add-hook 'flycheck-after-syntax-check-hook #'ed-java/reload-java-class-files-in-nrepl-projects)
 
 
-;; (provide 'java-setup)
+;; (provide 'ed/java-setup)
 ;;; java-setup.el ends here
 
 
