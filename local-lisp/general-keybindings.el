@@ -59,6 +59,7 @@
 (define-key ed/C-x-C-c-prefix (kbd "C-c") 'mc/mark-all-words-like-this)
 (define-key ed/C-x-C-c-prefix (kbd "C-/") 'company-complete)
 (define-key ed/C-x-C-c-prefix (kbd "C-j") 'ed/send-kill-ring-to-tmux)
+(define-key ed/C-x-C-c-prefix (kbd "C-e") 'ed-clojure/json->edn)
 
 ;; (defhydra hydra-ed-C-x-C-C (:colour blue)
 ;;   "

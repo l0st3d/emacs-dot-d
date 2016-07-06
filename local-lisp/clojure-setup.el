@@ -37,6 +37,27 @@
                                                                  '() '() '())))
       (cider-load-buffer))))
 
+(defun ed-clojure/json->edn (start end)
+  "Convert JSON to EDN.  Takes region START and END."
+  (interactive "r")
+  (when (cider-connected-p)
+    (cider-nrepl-request:eval
+     (concat
+      "(let [d " (prin1-to-string (buffer-substring-no-properties start end))"]
+(or
+ (try
+  (require 'cheshire.core)
+  (require 'camel-snake-kebab.core)
+  (pr-str (cheshire.core/decode d camel-snake-kebab.core/->kebab-case-keyword))
+  (catch Throwable e)))
+"
+      ")")
+     (nrepl-make-response-handler (current-buffer)
+                                  (lambda (_buffer result)
+                                    (let ((msg (read result)))
+                                      (kill-new msg)))
+                                  '() '() '()))))
+
 (add-hook 'after-save-hook 'ed-clojure/compile-after-save)
 (require 'paredit)
 
