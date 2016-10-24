@@ -58,8 +58,10 @@
 (define-key ed/C-x-C-c-prefix (kbd "C-SPC") 'mc/mark-all-like-this)
 (define-key ed/C-x-C-c-prefix (kbd "C-c") 'mc/mark-all-words-like-this)
 (define-key ed/C-x-C-c-prefix (kbd "C-/") 'company-complete)
-(define-key ed/C-x-C-c-prefix (kbd "C-j") 'ed/send-kill-ring-to-tmux)
+(define-key ed/C-x-C-c-prefix (kbd "C-t") 'ed/send-kill-ring-to-tmux)
+(define-key ed/C-x-C-c-prefix (kbd "x") 'gui-set-selection)
 (define-key ed/C-x-C-c-prefix (kbd "C-e") 'ed-clojure/json->edn)
+(define-key ed/C-x-C-c-prefix (kbd "C-b") 'ed/dired-git-project)
 
 ;; (defhydra hydra-ed-C-x-C-C (:colour blue)
 ;;   "
@@ -83,7 +85,7 @@
 
 ;; (global-set-key (kbd "C-x C-c") 'hydra-ed-C-x-C-C/body)
 
-(global-set-key (kbd "<s-return>") 'org-agenda)
+(global-set-key (kbd "s-#") 'org-agenda)
 
 (provide 'general-keybindings)
 ;;; general-keybindings.el ends here
