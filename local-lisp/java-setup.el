@@ -29,6 +29,24 @@
 ;;     post-compile-hook)
 ;;         ;;
 ;; esac
+;;
+;; Or need this in ~/.gradle/init.gradle:
+;; allprojects {
+;;   task printClasspath {
+;;     doLast {
+;;       System.err.println configurations.testRuntime.inject(null) { s, j -> if (s) { s + ":" + j;} else { j.getName();}}
+;;     }
+;;   }
+;; }
+;;
+;; To clear state in a buffer and reset it, do:
+;; (progn
+;;   (setq ed-java/project-dir nil)
+;;   (setq ed-java/project-type nil)
+;;   (setq ed-java/target-compile-dir nil)
+;;   (setq ed-java/compile-sourcepath nil)
+;;   (setq ed-java/tags-file-location nil)
+;;   (ed-java/init-java-buffer))
 
 ;;; Code:
 
@@ -41,6 +59,7 @@
 (defconst ed-java/lein "/Users/ebo03/bin/lein")
 (defconst ed-java/etags "/Applications/Emacs.app/Contents/MacOS/bin/etags")
 (defconst ed-java/javac "javac")
+(defconst ed-java/gradle "/usr/bin/gradle")
 
 ;; global state
 (defvar ed-java/project-classpaths (make-hash-table :test 'equal))
@@ -73,7 +92,7 @@
 
 (defun ed-java/get-gradle-classpath (project-dir)
   "Docs with PROJECT-DIR."
-  (shell-command-to-string (concat "cd " project-dir " ; " ed-java/mvn " -o  dependency:build-classpath | grep '^/'")))
+  (shell-command-to-string (concat  "cd " project-dir " ; " ed-java/gradle " printClasspath 2>&1 1>/dev/null")))
 
 (defun ed-java/update-tags (tags-dir)
   "Docs with TAGS-DIR."
@@ -84,13 +103,15 @@
   "Docs."
   (interactive)
   (when ed-java/project-dir
-    (compile (concat "cd " ed-java/project-dir " ; " ed-java/mvn " -o test"))))
+    (cond ((eq ed-java/project-type 'gradle) (compile (concat "cd " ed-java/project-dir " ; " ed-java/gradle " test")))
+          (t (compile (concat "cd " ed-java/project-dir " ; " ed-java/mvn " -o test"))))))
 
 (defun ed-java/compile ()
   "Docs."
   (interactive)
   (when ed-java/project-dir
-    (compile (concat "cd " ed-java/project-dir " ; " ed-java/mvn " -o compile"))))
+    (cond ((eq ed-java/project-type 'gradle) (compile (concat "cd " ed-java/project-dir " ; " ed-java/gradle " compileJava")))
+          (t (compile (concat "cd " ed-java/project-dir " ; " ed-java/mvn " -o compile"))))))
 
 ;; (defun ed-java/open-file-in-intelij ()
 ;;   "Docs."
@@ -101,13 +122,21 @@
   "Docs."
   (local-set-key (kbd "C-c C-t") 'ed-java/run-tests)
   (local-set-key (kbd "C-c i") 'ed-java/open-file-in-intelij)
-  (local-set-key (kbd "C-c C-c") 'ed-java/compile))
+  (local-set-key (kbd "C-c C-k") 'ed-java/compile))
 
 (defun ed-java/select-target-compile-dir (project-type project-dir manual-shell-script)
   "Return the compile dir given the PROJECT-TYPE, PROJECT-DIR, and MANUAL-SHELL-SCRIPT."
-  (if (eq 'manual-shell-script project-type)
-      (ed-java/remove-whitespace (shell-command-to-string (concat manual-shell-script " target-dir " (buffer-file-name))))
-    (concat ed-java/project-dir "target" (when (eq 'lein project-type) "/classes"))))
+  (cond ((eq 'manual-shell-script project-type)
+         (ed-java/remove-whitespace (shell-command-to-string (concat manual-shell-script " target-dir " (buffer-file-name)))))
+
+        ((eq 'gradle project-type)
+         (concat ed-java/project-dir "build/classes/test"))
+
+        ((eq 'lein project-type)
+         (concat ed-java/project-dir "target/classes"))
+
+        (t
+         (concat ed-java/project-dir "target" (when (eq 'lein project-type) "/classes")))))
 
 (defun ed-java/select-project-dir (pom project-dot-clj build-dot-gradle manual-shell-script)
   "Select a project dir based on POM, PROJECT-DOT-CLJ, BUILD-DOT-GRADLE and MANUAL-SHELL-SCRIPT."
@@ -116,33 +145,38 @@
 
 (defun ed-java/select-project-type (pom project-dot-clj build-dot-gradle manual-shell-script)
   "Select a project dir based on POM, PROJECT-DOT-CLJ, BUILD-DOT-GRADLE and MANUAL-SHELL-SCRIPT."
-  (cond (manual-shell-script 'manual-shell-script)
-	(project-dot-clj 'lein)
-        (build-dot-gradle 'gradle)
-	(pom 'maven)))
+  (message "select project type")
+  (message pom)
+  (message project-dot-clj)
+  (message build-dot-gradle)
+  (message manual-shell-script)
+  (cond (project-dot-clj 'lein)
+	(build-dot-gradle 'gradle)
+        (pom 'maven)
+	(manual-shell-script 'manual-shell-script)))
 
 (defun ed-java/select-project-classpath (project-type project-dir manual-shell-script)
   "Select a project classpath based on PROJECT-TYPE and PROJECT-DIR and MANUAL-SHELL-SCRIPT."
-  (cond ((eq 'maven project-type) (ed-java/get-mvn-classpath project-dir))
-	((eq 'lein project-type) (ed-java/get-lein-classpath project-dir))
-        ((eq 'gradle project-dir) (ed-java/get-gradle-classpath project-dir))
+  (cond ((eq 'maven project-type)               (ed-java/get-mvn-classpath project-dir))
+	((eq 'lein project-type)                (ed-java/get-lein-classpath project-dir))
+        ((eq 'gradle project-type)              (ed-java/get-gradle-classpath project-dir))
 	((eq 'manual-shell-script project-type) (ed-java/remove-whitespace (shell-command-to-string (concat manual-shell-script " classpath " (buffer-file-name)))))
 	(t (message "Cannot find project classpath"))))
 
 (defun ed-java/select-sourcepath (project-type project-dir manual-shell-script)
   "Select a project sourcepath based on PROJECT-TYPE, PROJECT-DIR and MANUAL-SHELL-SCRIPT."
-  (cond ((eq 'maven project-type) (concat project-dir "src/main/java:" project-dir "src/test/java:"))
-	((eq 'lein project-type) (concat project-dir "src"))
-        ((eq 'gradle project-type) (concat project-dir "src/main/java:" project-dir "src/test/java:"))
-	((eq 'manual-shell-script project-type) (ed-java/remove-whitespace (shell-command-to-string (concat manual-shell-script " sourcepath " (buffer-file-name)))))))
+  (cond ((eq 'maven project-type)                (concat project-dir "src/main/java:" project-dir "src/test/java:"))
+	((eq 'lein project-type)                 (concat project-dir "src"))
+        ((eq 'gradle project-type)               (concat project-dir "src/main/java:" project-dir "src/test/java:"))
+	((eq 'manual-shell-script project-type)  (ed-java/remove-whitespace (shell-command-to-string (concat manual-shell-script " sourcepath " (buffer-file-name)))))))
 
 (defun ed-java/init-java-buffer ()
   "Init java buffer."
-  (let* ((pom (ed-java/find-above-buffer "pom.xml"))
-	 (project-dot-clj (ed-java/find-above-buffer "project.clj"))
-         (build-dot-gradle) (ed-java/find-above-buffer "build.gradle")
+  (let* ((pom                 (ed-java/find-above-buffer "pom.xml"))
+	 (project-dot-clj     (ed-java/find-above-buffer "project.clj"))
+         (build-dot-gradle    (ed-java/find-above-buffer "build.gradle"))
 	 (manual-shell-script (concat (ed-java/find-above-buffer "compile-info.sh") "compile-info.sh"))
-	 (project-dir (ed-java/select-project-dir pom project-dot-clj build-dot-gradle manual-shell-script)))
+	 (project-dir         (ed-java/select-project-dir pom project-dot-clj build-dot-gradle manual-shell-script)))
     (when project-dir
       (setq ed-java/project-type (ed-java/select-project-type pom project-dot-clj build-dot-gradle manual-shell-script))
       (setq ed-java/project-dir project-dir)
@@ -199,7 +233,10 @@
 	    source-original)
   :error-patterns ((error line-start (file-name) ":" line ": error: " (message) line-end))
   :modes java-mode
-  :predicate (lambda () (and (flycheck-buffer-saved-p) ed-java/project-dir (gethash ed-java/project-dir ed-java/project-classpaths) (file-accessible-directory-p ed-java/target-compile-dir))))
+  :predicate (lambda () (and (flycheck-buffer-saved-p)
+                             ed-java/project-dir
+                             (gethash ed-java/project-dir ed-java/project-classpaths)
+                             (file-accessible-directory-p ed-java/target-compile-dir))))
 
 ;; (flycheck-define-checker ed-java/check-with-mvn
 ;;   "Check a java file with mvn."
