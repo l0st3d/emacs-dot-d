@@ -58,6 +58,12 @@
                                       (kill-new msg)))
                                   '() '() '()))))
 
+(defun ed-clojure/dired-lein-project ()
+  "Open git project in dired."
+  (interactive)
+  (let ((find-args (concat "-iname '*." (replace-regexp-in-string ".*\\." "" (buffer-file-name)) "'")))
+    (find-dired (ed/find-above-buffer "project.clj") find-args)))
+
 (add-hook 'after-save-hook 'ed-clojure/compile-after-save)
 (require 'paredit)
 
