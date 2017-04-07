@@ -87,6 +87,7 @@
   (define-key clojure-mode-map (kbd "C-c \"") 'clojure-toggle-keyword-string)
   (define-key clojure-mode-map (kbd "C-c b") 'ed-clojure/dired-lein-project)
   (define-key cider-repl-mode-map (kbd "C-c <C-backspace>") 'paredit-raise-sexp)
+  (subword-mode)
   (clj-refactor-mode 1)
   (yas-minor-mode 1)
   (aggressive-indent-mode)
