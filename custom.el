@@ -27,6 +27,7 @@
    (quote
     (etags-select yafolding which-key wgrep smex scala-mode2 mc-extras magit java-snippets groovy-mode gradle-mode flycheck-protobuf flycheck-clojure epresent ensime company-web company-inf-ruby clojure-snippets clj-refactor aggressive-indent)))
  '(sentence-end-double-space nil)
+ '(split-height-threshold 200)
  '(sql-informix-program "/Users/ebo03/Apps/informix/dbaccess.sh")
  '(sql-server ""))
 (custom-set-faces
