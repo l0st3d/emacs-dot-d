@@ -25,7 +25,8 @@
 (global-set-key (kbd "M-'") 'insert-pair)
 (global-set-key (kbd "C-M-<") 'insert-pair)
 
-(global-set-key (kbd "M-o") 'other-window)
+(global-set-key (kbd "s-x") 'other-window)
+(global-set-key (kbd "s-b") '(lambda () (interactive) (other-window -1)))
 (global-set-key (kbd "C-x o") 'other-frame)
 
 ;; (global-set-key (kbd "C-n") 'next-logical-line)
@@ -40,7 +41,7 @@
 
 (global-set-key (kbd "C-c C-f") 'find-dired)
 
-(global-set-key (kbd "C-c M-o") 'ed/rotate-windows)
+;; (global-set-key (kbd "C-c M-o") 'ed/rotate-windows)
 
 (global-set-key (kbd "C-o") 'Control-X-prefix)
 
