@@ -1,0 +1,7 @@
+# -*- coding: utf-8 -*-
+# name: Create test function
+# key: @test
+# --
+@Test fun $1() {
+    $0
+}

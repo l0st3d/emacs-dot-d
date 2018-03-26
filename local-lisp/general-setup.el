@@ -38,6 +38,8 @@
 (desktop-save-mode 1)
 (setq inhibit-splash-screen t)
 
+(setq frame-title-format (list (getenv "USER") " - %b"))
+
 (setq sql-informix-options nil)
 
 (subword-mode 1)
@@ -110,6 +112,19 @@ index in STRING."
       (unless (or regionp  (not bnds)  (eql (point) (car bnds)))
         (forward-thing thgcmd-last-thing-type (if (< (mark) (point)) 1 -1)))))
   (setq deactivate-mark  nil))
+
+(defun ed/isearch-yank-symbol ()
+  "*Put symbol at current point into search string."
+  (interactive)
+  (let ((sym (symbol-at-point)))
+    (if sym
+        (progn
+          (setq isearch-regexp t
+                isearch-string (concat "\\_<" (regexp-quote (symbol-name sym)) "\\_>")
+                isearch-message (mapconcat 'isearch-text-char-description isearch-string "")
+                isearch-yank-flag t))
+      (ding)))
+  (isearch-search-and-update))
 
 ;; (mc/mark-more-like-this-extended)
 

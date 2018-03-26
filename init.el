@@ -6,7 +6,7 @@
 
 (setq load-path (append (list "~/.emacs.d/local-lisp/") load-path))
 (require 'package)
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+;; (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (package-initialize)
 
@@ -18,6 +18,10 @@
 	       "java-setup"
 	       "clojure-setup"))
   (load lib 'noerror))
+
+;; Temp adding this here, while I get it working
+(load-file "/home/ed/dev/l0st3d/emacs-jvm-build-minor-mode/l0st3d-jvm-build.el")
+(l0st3d-jvm-build/initialise-mode)
 
 (put 'set-goal-column 'disabled nil)
 

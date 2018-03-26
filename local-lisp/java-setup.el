@@ -34,7 +34,7 @@
 
 (require 'flycheck)
 (require 'cider)
-(require 'ensime-macros)
+;; (require 'ensime-macros)
 
 ;; constants
 (defconst ed-java/mvn "/Users/ebo03/Apps/maven/bin/mvn")
