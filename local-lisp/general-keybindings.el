@@ -25,7 +25,8 @@
 (global-set-key (kbd "M-'") 'insert-pair)
 (global-set-key (kbd "C-M-<") 'insert-pair)
 
-(global-set-key (kbd "M-o") 'other-window)
+(global-set-key (kbd "s-x") 'other-window)
+(global-set-key (kbd "s-b") '(lambda () (interactive) (other-window -1)))
 (global-set-key (kbd "C-x o") 'other-frame)
 
 ;; (global-set-key (kbd "C-n") 'next-logical-line)
@@ -40,7 +41,7 @@
 
 (global-set-key (kbd "C-c C-f") 'find-dired)
 
-(global-set-key (kbd "C-c M-o") 'ed/rotate-windows)
+;; (global-set-key (kbd "C-c M-o") 'ed/rotate-windows)
 
 (global-set-key (kbd "C-o") 'Control-X-prefix)
 
@@ -78,16 +79,22 @@
 ;; _SPC_: Mark all like region        _/_: Company complete
 ;;   _c_: Mark all symbols like this
 ;;   _m_: Mark here
+;;   _s_: isearch
 
 ;;   _q_: quit
 ;; "
 ;;   ("SPC" mc/mark-all-like-this)
 ;;   ("c" mc/mark-all-symbols-like-this)
-;;   ("m" mc/create-fake-cursor-at-point)
+;;   ("m" (lambda ()
+;;          ;; todo finish
+;;          ) nil)
+;;   ("s" isearch-forward)
 ;;   ("/" company-complete)
-;;   ("q" nil "quit"))
+;;   ("q" nil "cancel"))
 
 ;; (global-set-key (kbd "C-x C-c") 'hydra-ed-C-x-C-C/body)
+
+(global-set-key (kbd "s-#") 'org-agenda)
 
 (provide 'general-keybindings)
 ;;; general-keybindings.el ends here

@@ -10,5 +10,5 @@
 
 (add-to-list 'flycheck-disabled-checkers 'javascript-jshint)
 
-(provide 'js-setup)
+;; (provide 'ed/js-setup)
 ;;; js-setup.el ends here

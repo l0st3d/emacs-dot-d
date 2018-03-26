@@ -25,5 +25,5 @@
 
 (put 'set-goal-column 'disabled nil)
 
-;; (provide 'init)
+;; (provide 'ed/init)
 ;;; init.el ends here

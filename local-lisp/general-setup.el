@@ -45,6 +45,8 @@
 (subword-mode 1)
 (smex-initialize)
 
+(which-key-mode)
+
 (defun ed/untabify-line ()
   (interactive)
   (save-excursion
@@ -125,6 +127,29 @@ index in STRING."
                 isearch-yank-flag t))
       (ding)))
   (isearch-search-and-update))
+
+(defun ed/send-kill-ring-to-tmux (start end)
+  "Takes region START and END."
+  (interactive "r")
+  ;; (start-process "ed/send-to-tmux" "*ed/send-to-tmux*" "tmux" "load-buffer" "-" (buffer-substring-no-properties start end))
+  (shell-command-on-region start end "tmux load-buffer -"))
+
+(defun ed/find-above-buffer (file-name)
+  "Docs with FILE-NAME."
+  (when-let (file-name (locate-dominating-file (buffer-file-name) file-name))
+	    (expand-file-name file-name)))
+
+(defun ed/dired-git-project ()
+  "Open git project in dired."
+  (interactive)
+  (let ((find-args (concat "-iname '*." (replace-regexp-in-string ".*\\." "" (buffer-file-name)) "'")))
+    (find-dired (ed/find-above-buffer ".git") find-args)))
+
+;; (defun ed/replace-thing-at-point ()
+;;   "."
+;;   (interactive)
+;;   (let ((t (thing-at-point)))
+;;     (query-replace (concat "\\b" t "\\b"))))
 
 ;; (mc/mark-more-like-this-extended)
 
