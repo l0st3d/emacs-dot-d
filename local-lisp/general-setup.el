@@ -45,7 +45,7 @@
 (subword-mode 1)
 (smex-initialize)
 
-(which-key-mode)
+;; (which-key-mode)
 
 (defun ed/untabify-line ()
   (interactive)
